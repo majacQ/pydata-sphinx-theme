@@ -23,8 +23,16 @@ from numpydoc.docscrape_sphinx import SphinxDocString
 
 logger = logging.getLogger(__name__)
 
+  <<<<<<< remove-docutils-container-class
+import pandas_sphinx_theme
+
+
+# -----------------------------------------------------------------------------
+# IPython monkeypath - set all code blocks to verbatim to speed-up doc build
+  =======
 # -----------------------------------------------------------------------------
 # IPython monkeypath
+  >>>>>>> bootstrap-docs-theme
 
 import warnings
 from IPython.sphinxext.ipython_directive import block_parser
@@ -104,6 +112,88 @@ IPython.sphinxext.ipython_directive.IPythonDirective.run = run
 # -----------------------------------------------------------------------------
 # Sphinx monkeypatch
 
+  <<<<<<< remove-docutils-container-class
+# from sphinx.environment.adapters.toctree import process_only_nodes
+# from docutils import nodes
+# from sphinx import addnodes
+
+
+# def get_toc_for(self, docname, builder):
+#     # type: (str, Builder) -> nodes.Node
+#     """Return a TOC nodetree -- for use on the same page only!"""
+#     tocdepth = self.env.metadata[docname].get('tocdepth', 0)
+#     try:
+#         toc = self.env.tocs[docname].deepcopy()
+#         self._toctree_prune(toc, 2, tocdepth)
+#     except KeyError:
+#         # the document does not exist anymore: return a dummy node that
+#         # renders to nothing
+#         return nodes.paragraph()
+#     process_only_nodes(toc, builder.tags)
+#     for node in toc.traverse(nodes.reference):
+#         node['refuri'] = node['anchorname'] or '#'
+
+#     # tag toc with attributes
+#     toc.attributes['classes'].append('section-nav')
+
+#     def tag_childs(bullet_list, level):
+#         for sub in bullet_list.children:
+#             if getattr(sub, 'tagname', '') == 'list_item':
+#                 sub.attributes['classes'].extend(['toc-entry', 'toc-h{}'.format(level)])
+#                 for sub2 in sub.children:
+#                     if getattr(sub2, 'tagname', '') == 'bullet_list':
+#                         tag_childs(sub2, level + 1)
+
+#     tag_childs(toc, 1)
+
+#     return toc
+
+# def get_toctree_for(self, docname, builder, collapse, **kwds):
+#     # type: (str, Builder, bool, Any) -> nodes.Element
+#     """Return the global TOC nodetree."""
+#     #import pdb; pdb.set_trace()
+#     doctree = self.env.get_doctree(self.env.config.master_doc)
+#     toctrees = []  # type: List[nodes.Element]
+#     if 'includehidden' not in kwds:
+#         kwds['includehidden'] = True
+#     if 'maxdepth' not in kwds:
+#         kwds['maxdepth'] = 0
+#     kwds['collapse'] = collapse
+#     mindepth = kwds.pop('mindepth', False)
+#     for toctreenode in doctree.traverse(addnodes.toctree):
+#         toctree = self.resolve(docname, builder, toctreenode, prune=True, **kwds)
+#         if toctree:
+#             toctrees.append(toctree)
+#     if not toctrees:
+#         return None
+#     result = toctrees[0]
+#     for toctree in toctrees[1:]:
+#         result.extend(toctree.children)
+#     if mindepth and docname not in ('index', 'genindex', 'search'):
+#         #import pdb; pdb.set_trace()
+#         result = get_current_section_toctree(result)
+#     return result
+
+
+# def get_current_section_toctree(toctree):
+#     actual_toctree = toctree[0]
+#     for subtoc in actual_toctree.children:
+#         if 'current' in subtoc.attributes['classes']:
+#             newtoc = subtoc.children[1]
+#             break
+#     else:
+#         newtoc = actual_toctree
+#     toctree[0] = newtoc
+#     toctree[0].attributes['classes'].extend(['nav', 'bd-sidenav', 'active'])
+#     #import pdb; pdb.set_trace()
+#     return toctree
+
+
+# import sphinx.environment.adapters.toctree
+# sphinx.environment.adapters.toctree.TocTree.get_toc_for = get_toc_for
+# sphinx.environment.adapters.toctree.TocTree.get_toctree_for = get_toctree_for
+
+  =======
 from sphinx.environment.adapters.toctree import process_only_nodes
 from docutils import nodes
 from sphinx import addnodes
@@ -239,6 +329,7 @@ def update_page_context(self, pagename, templatename, ctx, event_arg):
 
 import sphinx.builders.html
 sphinx.builders.html.StandaloneHTMLBuilder.update_page_context = update_page_context
+  >>>>>>> bootstrap-docs-theme
 
 # -----------------------------------------------------------------------------
 
@@ -339,6 +430,9 @@ plot_html_show_source_link = False
 plot_pre_code = """import numpy as np
 import pandas as pd"""
 
+# nbsphinx do not use requirejs (breaks bootstrap)
+nbsphinx_requirejs_path = ''
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['../_templates']
 
@@ -412,7 +506,11 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
+  <<<<<<< remove-docutils-container-class
+html_theme = 'pandas_sphinx_theme'
+  =======
 html_theme = 'bootstrap_docs_theme'
+  >>>>>>> bootstrap-docs-theme
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
@@ -425,7 +523,11 @@ html_theme = 'bootstrap_docs_theme'
 # html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
+  <<<<<<< remove-docutils-container-class
+#html_theme_path = ['_themes']
+  =======
 html_theme_path = ['_themes']
+  >>>>>>> bootstrap-docs-theme
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -436,7 +538,7 @@ html_theme_path = ['_themes']
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = None
+html_logo = '_static/pandas.svg'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
