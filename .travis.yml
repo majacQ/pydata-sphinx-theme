@@ -28,6 +28,7 @@ install:
 
 script:
   - set -e
+  - pip install -e .
   - cd pandas-docs
   - python make.py html
   - cd ..

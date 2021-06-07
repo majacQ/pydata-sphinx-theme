@@ -48,34 +48,16 @@ pandas documentation overview
 
 See the :ref:`overview` for more detail about what's in the library.
 
-{% if single_doc and single_doc.endswith('.rst') -%}
-.. toctree::
-    :maxdepth: 1
-
-    {{ single_doc[:-4] }}
-{% elif single_doc %}
-.. autosummary::
-    :toctree: reference/api/
-
-    {{ single_doc }}
-{% else -%}
 .. toctree::
     :maxdepth: 1
     :hidden:
-{% endif %}
 
-    {% if not single_doc -%}
+
     getting_started/index
     user_guide/index
-    {% endif -%}
-    {% if include_api -%}
     reference/index
-    {% endif -%}
-    {% if not single_doc -%}
     development/index
     whatsnew/index
-{% endif -%}
-
 .. toctree::
     :maxdepth: 2
     :caption: An extra caption. This item should be at the end of page nav (and duplicated)

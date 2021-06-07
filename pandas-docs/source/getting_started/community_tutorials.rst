@@ -1,10 +1,10 @@
-.. _tutorials:
+.. _comm_tutorials:
 
 {{ header }}
 
-*********
-Tutorials
-*********
+*******************
+Community Tutorials
+*******************
 
 This is a guide to many pandas tutorials, geared mainly for new users.
 
@@ -16,6 +16,8 @@ pandas' own :ref:`10 Minutes to pandas<10min>`.
 More complex recipes are in the :ref:`Cookbook<cookbook>`.
 
 A handy pandas `cheat sheet <http://pandas.pydata.org/Pandas_Cheat_Sheet.pdf>`_.
+
+.. _community_guides:
 
 Community Guides
 ================
