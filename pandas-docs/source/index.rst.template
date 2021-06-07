@@ -1,4 +1,8 @@
+  <<<<<<< remove-docutils-container-class
 :notoc:
+  =======
+:nosidebar:
+  >>>>>>> bootstrap-docs-theme
 
 .. pandas documentation master file, created by
 
