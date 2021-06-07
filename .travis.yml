@@ -19,10 +19,12 @@ install:
   - conda config --add channels conda-forge
   
   # Install pandas + some optional dependencies
-  - conda install pandas matplotlib ipython sphinx ipykernel jinja2 numpydoc nbconvert nbsphinx jupyter_client gitpython
+  - conda install pandas matplotlib ipython sphinx=1.8 ipykernel jinja2 numpydoc nbconvert nbsphinx jupyter_client gitpython
 
   # install doctr
   - conda install -c conda-forge doctr
+  
+  - conda install sphinx_rtd_theme
 
 script:
   - set -e

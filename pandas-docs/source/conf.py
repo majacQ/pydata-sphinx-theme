@@ -363,7 +363,12 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
+  <<<<<<< integrate-getting-started
 html_theme = 'pandas_sphinx_theme'
+  =======
+#html_theme = 'nature_with_gtoc'
+html_theme = "sphinx_rtd_theme"
+  >>>>>>> readthedocs-theme
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
@@ -373,10 +378,16 @@ html_theme = 'pandas_sphinx_theme'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
+html_theme_options = {
+    'collapse_navigation': False,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
+  <<<<<<< integrate-getting-started
 #html_theme_path = ['_themes']
+  =======
+#html_theme_path = ['themes']
+  >>>>>>> readthedocs-theme
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
