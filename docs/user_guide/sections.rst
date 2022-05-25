@@ -11,7 +11,7 @@ You can choose which templates show up in each section, as well as the order in
 which they appear. This page describes the major areas that you can customize.
 
 .. note::
-    
+
    When configuring templates in each section, you may omit the ``.html``
    suffix after each template if you wish.
 
@@ -66,6 +66,25 @@ By default, it has the following configuration:
         "**": ["search-field", "sidebar-nav-bs", "sidebar-ethical-ads"]
     }
 
+Left sidebar end sections
+=========================
+
+There is a special ``<div>`` within the left sidebar that appears at the
+bottom of the page, regardless of the content that is above it.
+
+To control the HTML templates that are within this div, use
+``html_theme_options['left_sidebar_end']`` in ``conf.py``.
+
+By default, it has the following templates:
+
+.. code-block:: python
+
+    html_theme_options = {
+      ...
+      "left_sidebar_end": ["sidebar-ethical-ads"],
+      ...
+    }
+
 
 The right in-page sidebar
 =========================
@@ -102,7 +121,7 @@ By default, it has the following templates:
 A list of built-in templates you can insert into sections
 =========================================================
 
-Below is a list of build-in templates that you can insert into any section.
+Below is a list of built-in templates that you can insert into any section.
 Note that some of them may have CSS rules that assume a specific section (and
 will be named accordingly).
 
@@ -118,6 +137,8 @@ will be named accordingly).
 - ``sidebar-ethical-ads.html``
 - ``sidebar-nav-bs.html``
 - ``sphinx-version.html``
+- ``version-switcher.html``
+- ``theme-switcher.html``
 
 Add your own HTML templates to theme sections
 =============================================
@@ -135,8 +156,8 @@ could do so with the following steps:
       <!-- This will display the version of the docs -->
       {{ version }}
 
-1. Now add the file to your menu items for one of the sections above. For example:
-   
+2. Now add the file to your menu items for one of the sections above. For example:
+
    .. code-block:: python
 
       html_theme_options = {

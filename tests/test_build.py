@@ -91,6 +91,52 @@ def test_toc_visibility(sphinx_build_factory):
     assert "visible" not in index_html.select(".toc-h3 ul")[0].attrs["class"]
 
 
+def test_icon_links(sphinx_build_factory, file_regression):
+    html_theme_options_icon_links = {
+        "icon_links": [
+            {
+                "name": "FONTAWESOME",
+                "url": "https://site1.org",
+                "icon": "FACLASS",
+                "type": "fontawesome",
+            },
+            {
+                "name": "FONTAWESOME DEFAULT",
+                "url": "https://site2.org",
+                "icon": "FADEFAULTCLASS",
+                # No type so we can test that the default is fontawesome
+            },
+            {
+                "name": "LOCAL FILE",
+                "url": "https://site3.org",
+                "icon": "emptylogo.png",  # Logo is our only test site img
+                "type": "local",
+            },
+            {
+                "name": "WRONG TYPE",
+                "url": "https://site4.org",
+                "icon": "WRONG TYPE",
+                # Because the type is inccorect, this should output an error `span`
+                "type": "incorrecttype",
+            },
+            {
+                "name": "URL",
+                "url": "https://site5.org",
+                "icon": "https://site5.org/image.svg",
+                "type": "url",
+            },
+        ]
+    }
+    confoverrides = {"html_theme_options": html_theme_options_icon_links}
+
+    sphinx_build = sphinx_build_factory("base", confoverrides=confoverrides).build()
+    # Navbar should have the right icons
+    icon_links = sphinx_build.html_tree("index.html").select("#navbar-icon-links")[0]
+    file_regression.check(
+        icon_links.prettify(), basename="navbar_icon_links", extension=".html"
+    )
+
+
 def test_logo(sphinx_build_factory):
     """Test that the logo is shown by default, project title if no logo."""
     sphinx_build = sphinx_build_factory("base").build()
@@ -139,14 +185,16 @@ def test_favicons(sphinx_build_factory):
 
     icon_16 = (
         '<link href="https://secure.example.com/favicon/favicon-16x16.png" '
-        'rel="icon" sizes="16x16"/>'
+        'rel="icon" sizes="16x16" type="image/png">'
     )
-    icon_32 = '<link href="_static/favicon-32x32.png" rel="icon" sizes="32x32"/>'
+    icon_32 = (
+        '<link href="_static/favicon-32x32.png" rel="icon" sizes="32x32" '
+        'type="image/png">'
+    )
     icon_180 = (
         '<link href="_static/apple-touch-icon-180x180.png" '
-        'rel="apple-touch-icon" sizes="180x180"/>'
+        'rel="apple-touch-icon" sizes="180x180" type="image/png">'
     )
-
     assert icon_16 in str(index_html.select("head")[0])
     assert icon_32 in str(index_html.select("head")[0])
     assert icon_180 in str(index_html.select("head")[0])
@@ -241,6 +289,46 @@ def test_sidebars_level2(sphinx_build_factory, file_regression):
     file_regression.check(sidebar.prettify(), extension=".html")
 
 
+def test_sidebars_show_nav_level0(sphinx_build_factory, file_regression):
+    """
+    Regression test for show_nav_level:0 when the toc is divided into parts.
+    Testing both home page and a subsection page for correct elements.
+    """
+    confoverrides = {"html_theme_options.show_nav_level": 0}
+    sphinx_build = sphinx_build_factory("sidebars", confoverrides=confoverrides).build()
+
+    # 1. Home Page
+    index_html = sphinx_build.html_tree("section1/index.html")
+    sidebar = index_html.select("nav#bd-docs-nav")[0]
+
+    # check if top-level ul is present
+    ul = sidebar.find("ul")
+    assert "list-caption" in ul.attrs["class"]
+
+    # get all li elements
+    li = ul.select("li")
+
+    # part li
+    assert "toctree-l0 has-children" in " ".join(li[0].attrs["class"])
+    assert "caption-text" in li[0].select("p span")[0].attrs["class"]
+    assert "label-parts" in li[0].find("label").attrs["class"]
+
+    # basic checks on other levels
+    assert "toctree-l1 has-children" in " ".join(li[1].attrs["class"])
+    assert "toctree-l2" in li[2].attrs["class"]
+
+    # 2. Subsection Page
+    subsection_html = sphinx_build.html_tree("section1/subsection1/index.html")
+    sidebar = subsection_html.select("nav#bd-docs-nav")[0]
+
+    # get all input elements
+    input_elem = sidebar.select("input")
+
+    # all input elements should be collapsed in this page
+    for ii in input_elem:
+        assert "checked" in ii.attrs
+
+
 def test_included_toc(sphinx_build_factory):
     """Test that Sphinx project containing TOC (.. toctree::) included
     via .. include:: can be successfully built.
@@ -256,7 +344,7 @@ def test_included_toc(sphinx_build_factory):
 
 # html contexts for `show_edit_button`
 
-# these are "good" context fragements that should yield a working link
+# these are "good" context fragments that should yield a working link
 good_edits = [
     [
         {
@@ -390,8 +478,8 @@ def test_new_google_analytics_id(sphinx_build_factory):
     sphinx_build.build()
     index_html = sphinx_build.html_tree("index.html")
     # This text makes the assumption that the google analytics will always be
-    # the last script tag found in the document.
-    script_tag = index_html.select("script")[-1]
+    # the second last script tag found in the document (last is the theme js).
+    script_tag = index_html.select("script")[-2]
 
     assert "gtag" in script_tag.string
     assert "G-XXXXX" in script_tag.string
@@ -403,8 +491,55 @@ def test_old_google_analytics_id(sphinx_build_factory):
     sphinx_build.build()
     index_html = sphinx_build.html_tree("index.html")
     # This text makes the assumption that the google analytics will always be
-    # the one before last script tag found in the document.
-    script_tag = index_html.select("script")[-1]
+    # the second last script tag found in the document (last is the theme js).
+    script_tag = index_html.select("script")[-2]
 
     assert "ga" in script_tag.string
     assert "UA-XXXXX" in script_tag.string
+
+
+def test_show_nav_level(sphinx_build_factory):
+    """The navbar items align with the proper part of the page."""
+    confoverrides = {"html_theme_options.show_nav_level": 2}
+    sphinx_build = sphinx_build_factory("sidebars", confoverrides=confoverrides).build()
+
+    # Both the column alignment and the margin should be changed
+    index_html = sphinx_build.html_tree("section1/index.html")
+
+    for checkbox in index_html.select("li.toctree-l1.has-children > input"):
+        assert "checked" in checkbox.attrs
+
+
+def test_version_switcher(sphinx_build_factory, file_regression):
+    """Regression test the version switcher dropdown HTML.
+
+    Note that a lot of the switcher HTML gets populated by JavaScript,
+    so we will not test the final behavior. This just tests for the basic
+    structure.
+
+    TODO: Find a way to test Javascript's behavior in populating the HTML.
+    """
+    confoverrides = {
+        "html_theme_options": {
+            "navbar_end": ["version-switcher"],
+            "switcher": {
+                "json_url": "switcher.json",
+                "version_match": "0.7.1",
+            },
+        }
+    }
+    sphinx_build = sphinx_build_factory("base", confoverrides=confoverrides).build()
+    switcher = sphinx_build.html_tree("index.html").select("#version_switcher")[0]
+    file_regression.check(
+        switcher.prettify(), basename="navbar_switcher", extension=".html"
+    )
+
+
+def test_theme_switcher(sphinx_build_factory, file_regression):
+    """Regression test the theme switcher btn HTML"""
+
+    sphinx_build = sphinx_build_factory("base").build()
+    switcher = sphinx_build.html_tree("index.html").select("#theme-switch")[0]
+    file_regression.check(
+        switcher.prettify(), basename="navbar_theme", extension=".html"
+    )
