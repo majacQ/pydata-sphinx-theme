@@ -11,3 +11,4 @@ plotly
 numpy
 xarray
 docutils==0.16  # temporary pin (0.17 broke captions)
+mistune>=2.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
